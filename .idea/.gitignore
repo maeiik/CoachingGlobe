@@ -1,0 +1,6 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+/composeApp/build/*
+.kotlin/
+composeApp/build/
