@@ -9,13 +9,18 @@ androidx-core = "1.17.0"
 androidx-espresso = "3.7.0"
 androidx-lifecycle = "2.9.4"
 androidx-testExt = "1.3.0"
+coil3ComposeVersion = "3.0.0-alpha06"
 composeHotReload = "1.0.0-beta07"
 composeMultiplatform = "1.9.0"
 junit = "4.13.2"
+kamelImage = "1.0.8"
 kotlin = "2.2.20"
 kotlinx-coroutines = "1.10.2"
+material3 = "1.4.0"
 
 [libraries]
+coil3-compose-v300alpha06 = { module = "io.coil-kt:coil3-compose", version.ref = "coil3ComposeVersion" }
+kamel-image = { module = "media.kamel:kamel-image", version.ref = "kamelImage" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -27,6 +32,7 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

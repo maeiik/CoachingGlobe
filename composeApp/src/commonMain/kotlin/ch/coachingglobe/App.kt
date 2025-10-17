@@ -1,49 +1,81 @@
 package ch.coachingglobe
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.filled.Place
+
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import ch.coachingglobe.ui.theme.AppTheme
 
-import coachingglobe.composeapp.generated.resources.Res
-import coachingglobe.composeapp.generated.resources.compose_multiplatform
+sealed class BottomNavItem(val route: String, val label: String, val icon: ImageVector) {
+    object Explore : BottomNavItem("explore", "Explore", Icons.Filled.Place)
+    object MySpace : BottomNavItem("myspace", "My Space", Icons.Filled.CheckCircle)
+    object Profile : BottomNavItem("profile", "Profile", Icons.Filled.Person)
+}
 
 @Composable
-@Preview
 fun App() {
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
+    AppTheme {
+        var selectedRoute by remember { mutableStateOf(BottomNavItem.Explore.route) }
+        val items = listOf(BottomNavItem.Explore, BottomNavItem.MySpace, BottomNavItem.Profile)
+
+        Scaffold(
+            bottomBar = {
+                NavigationBar {
+                    items.forEach { item ->
+                        NavigationBarItem(
+                            selected = selectedRoute == item.route,
+                            onClick = { selectedRoute = item.route },
+                            icon = { Icon(item.icon, contentDescription = item.label) },
+                            label = { Text(item.label) }
+                        )
+                    }
+                }
             }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                when (selectedRoute) {
+                    BottomNavItem.Explore.route -> ExploreScreen()
+                    BottomNavItem.MySpace.route -> MySpaceScreen()
+                    BottomNavItem.Profile.route -> ProfileScreen(
+                        profile = ProfileDto(
+                            firstName = "John",
+                            lastName = "Doe",
+                            location = "Earth",
+                            photoUrl = null
+                        )
+                    )
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ScreenLabel(text: String) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(16.dp)
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.headlineMedium,
+            textAlign = TextAlign.Center
+        )
     }
 }
