@@ -1,12 +1,11 @@
 package ch.coachingglobe
 
-import androidx.compose.material.icons.filled.Place
-
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -66,7 +65,7 @@ fun App() {
 }
 
 @Composable
-fun ScreenLabel(text: String) {
+fun ScreenLabel(text: String, content: @Composable (() -> Unit)? = null) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -77,5 +76,6 @@ fun ScreenLabel(text: String) {
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center
         )
+        content?.invoke()
     }
 }

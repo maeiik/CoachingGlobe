@@ -1,5 +1,7 @@
 package ch.coachingglobe
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import platform.UIKit.UIDevice
 
 class IOSPlatform: Platform {
@@ -7,3 +9,7 @@ class IOSPlatform: Platform {
 }
 
 actual fun getPlatform(): Platform = IOSPlatform()
+
+@Composable
+actual fun YouTubePlayer(videoId: String, modifier: Modifier) {
+}
