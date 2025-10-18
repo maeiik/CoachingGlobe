@@ -65,22 +65,22 @@ class DataViewModel : ViewModel() {
         )
     )
 
-    val sampleCoachableSets: List<CoachableSet> = listOf(
-        CoachableSet(
-            ic_legacy = "1",
-            title = "Productivity Boosters",
-            description = "Nuggets to enhance your productivity at work.",
-            nuggets = sampleNuggets,
-            author = author
-        ),
-        CoachableSet(
-            ic_legacy = "1",
-            title = "Wellness at Work",
-            description = "Nuggets focused on mindfulness and physical well-being.",
-            nuggets = sampleNuggets.take(2),
-            author = author
-        )
-    )
+//    val sampleCoachableSets: List<CoachableSet> = listOf(
+//        CoachableSet(
+//            ic_legacy = "1",
+//            title = "Productivity Boosters",
+//            description = "Nuggets to enhance your productivity at work.",
+//            nuggets = sampleNuggets,
+//            author = author
+//        ),
+//        CoachableSet(
+//            ic_legacy = "1",
+//            title = "Wellness at Work",
+//            description = "Nuggets focused on mindfulness and physical well-being.",
+//            nuggets = sampleNuggets.take(2),
+//            author = author
+//        )
+//    )
 
     enum class NuggetStatus {
         NONE,
@@ -96,20 +96,30 @@ class DataViewModel : ViewModel() {
 
     val apiService = ApiService()
 
+    val dataResponse = ResponseX<DataDto>()
+
+    private val dataMutable = MutableStateFlow<DataDto?>(null)
+    val data = dataMutable.asStateFlow()
+
+    private val myNuggetsMutable = MutableStateFlow<Map<Int, NuggetWithStatus>>(emptyMap())
+    val myNuggets = myNuggetsMutable.asStateFlow()
+
     init {
         loadData()
     }
 
     fun loadData(forceReload: Boolean = false) {
-        handleRequest(response = dataResponse, name = "loadMyGroups") {
+        handleRequest(
+            response = dataResponse,
+            name = "loadMyGroups",
+            onSuccessKeepState = {
+                dataMutable.value = it
+                println("UBMB: data loaded: ${it}")
+            }
+        ) {
             apiService.loadData()
         }
     }
-
-    private val dataResponse = ResponseX<DataDto>()
-
-    private val myNuggetsMutable = MutableStateFlow<Map<Int, NuggetWithStatus>>(emptyMap())
-    val myNuggets = myNuggetsMutable.asStateFlow()
 
     private fun updateMyNuggets(nuggetId: Int, status: NuggetStatus) {
         myNuggetsMutable.value =
@@ -124,30 +134,14 @@ class DataViewModel : ViewModel() {
         return sampleNuggets.find { it.id == id } ?: sampleNuggets.first()
     }
 
-    fun getCoachableSetById(id: String): CoachableSet {
-        return sampleCoachableSets.find { it.ic_legacy == id } ?: sampleCoachableSets.first()
+    fun getSubject(id: Int): Subject? {
+        val data = data.value ?: return null
+        return data.subjects.firstOrNull { it.id == id }?.toSubject(data)
     }
 
-    fun getAllCoachableSets() = sampleCoachableSets
-
-    fun getSubject(id: Int, subjectToSearch: Subject = subjectExamples): Subject? {
-        if (subjectToSearch.id == id) return subjectToSearch
-        for (subject in subjectToSearch.subjects ?: emptyList()) {
-            if (subject.id == id) return subject
-        }
-        return null
-    }
-
-    fun getCoachableSet(
-        id: Int,
-        subjectToSearch: Subject = subjectExamples
-    ): CoachableSet? {
-        subjectToSearch.coachableSets?.firstOrNull { it.id == id }?.let { return it }
-        for (subject in subjectToSearch.subjects ?: emptyList()) {
-            val result = getCoachableSet(id, subject)
-            if (result != null) return result
-        }
-        return null
+    fun getCoachableSet(id: Int): CoachableSet? {
+        val data = data.value ?: return null
+        return data.coachableSets.firstOrNull { it.id == id }?.toCoachableSet(data)
     }
 
     fun onCouchMeClicked(nuggetId: Int) {
@@ -163,77 +157,16 @@ class DataViewModel : ViewModel() {
     }
 }
 
-val c1 = CoachableSet(
-    ic_legacy = "1",
-    title = "Leadership Coaching",
-    description = "An in-depth course on leadership skills for managers.",
-    nuggets = listOf(
-        Nugget(
-            id_legacy = "1",
-            title = "Goal Setting",
-            youtubeUrl = "https://youtube.com/video1",
-            description = "Learn to set clear, measurable goals for effective leadership.",
-            author = Author(
-                UserDto(
-                    id = 2,
-                    firstName = "Alice",
-                    lastName = "Johnson",
-                    photoUrl = "https://example.com/images/alice_johnson.jpg",
-                    email = "alice.johnson@example.com"
-                )
-            )
-        ),
-        Nugget(
-            id_legacy = "1",
-            title = "Effective Communication",
-            youtubeUrl = "https://youtube.com/video2",
-            description = "Master the art of communicating with clarity and confidence.",
-            author = Author(
-                UserDto(
-                    id = 2,
-                    firstName = "Alice",
-                    lastName = "Johnson",
-                    photoUrl = "https://example.com/images/alice_johnson.jpg",
-                    email = "alice.johnson@example.com"
-                )
-            )
-        )
-    ),
-    author = Author(
-        UserDto(
-            id = 2,
-            firstName = "Alice",
-            lastName = "Johnson",
-            photoUrl = "https://example.com/images/alice_johnson.jpg",
-            email = ""
-        )
-    )
-)
-
-
-val request1 = Request(
-    id = 1,
-    user = UserDto(
-        id = 1,
-        firstName = "John",
-        lastName = "Doe",
-        photoUrl = "https://example.com/images/john_doe.jpg",
-        email = "john.doe@example.com"
-    ),
-    coachableSet = c1,
-    status = "pending"
-)
-
-//val c2 = CoachableSet(
-//    id = "2",
-//    title = "Stress Management",
-//    description = "Techniques and strategies to manage stress effectively.",
+//val c1 = CoachableSet(
+//    ic_legacy = "1",
+//    title = "Leadership Coaching",
+//    description = "An in-depth course on leadership skills for managers.",
 //    nuggets = listOf(
 //        Nugget(
-//            id = "3",
-//            title = "Breathing Exercises",
-//            youtubeUrl = "https://youtube.com/video3",
-//            description = "Practice deep breathing exercises to relieve stress.",
+//            id_legacy = "1",
+//            title = "Goal Setting",
+//            youtubeUrl = "https://youtube.com/video1",
+//            description = "Learn to set clear, measurable goals for effective leadership.",
 //            author = Author(
 //                UserDto(
 //                    id = 2,
@@ -245,10 +178,10 @@ val request1 = Request(
 //            )
 //        ),
 //        Nugget(
-//            id = "4",
-//            title = "Mindfulness",
-//            youtubeUrl = "https://youtube.com/video4",
-//            description = "Learn mindfulness techniques to stay calm and focused.",
+//            id_legacy = "1",
+//            title = "Effective Communication",
+//            youtubeUrl = "https://youtube.com/video2",
+//            description = "Master the art of communicating with clarity and confidence.",
 //            author = Author(
 //                UserDto(
 //                    id = 2,
@@ -259,120 +192,30 @@ val request1 = Request(
 //                )
 //            )
 //        )
-//    )
-//)
-//val request2 = RequestDto(
-//    id = "2",
-//    user = UserDto(
-//        id = 2,
-//        firstName = "Alice",
-//        lastName = "Johnson",
-//        photoUrl = "https://example.com/images/alice_johnson.jpg",
-//        email = "alice.johnson@example.com"
 //    ),
-//    coachableSet = 2,
-//    status = "accepted"
-//)
-//
-//val c3 = CoachableSet(
-//    id = "3",
-//    title = "Time Management",
-//    description = "Learn how to manage your time efficiently and achieve your goals.",
-//    nuggets = listOf(
-//        Nugget(
-//            id = "5",
-//            title = "Prioritizing Tasks",
-//            youtubeUrl = "https://youtube.com/video5",
-//            description = "Learn how to prioritize tasks effectively to maximize productivity.",
-//            author = Author(
-//                UserDto(
-//                    id = 2,
-//                    firstName = "Alice",
-//                    lastName = "Johnson",
-//                    photoUrl = "https://example.com/images/alice_johnson.jpg",
-//                    email = "alice.johnson@example.com"
-//                )
-//            )
-//        ),
-//        Nugget(
-//            id = "6",
-//            title = "Time Blocking",
-//            youtubeUrl = "https://youtube.com/video6",
-//            description = "Master the time-blocking technique to stay focused and on task.",
-//            author = Author(
-//                UserDto(
-//                    id = 2,
-//                    firstName = "Alice",
-//                    lastName = "Johnson",
-//                    photoUrl = "https://example.com/images/alice_johnson.jpg",
-//                    email = "alice.johnson@example.com"
-//                )
-//            )
+//    author = Author(
+//        UserDto(
+//            id = 2,
+//            firstName = "Alice",
+//            lastName = "Johnson",
+//            photoUrl = "https://example.com/images/alice_johnson.jpg",
+//            email = ""
 //        )
 //    )
 //)
 //
-//val request3 = RequestDto(
-//    id = "3",
-//    user = UserDto(
-//        id = 3,
-//        firstName = "Bob",
-//        lastName = "Williams",
-//        photoUrl = "https://example.com/images/bob_williams.jpg",
-//        email = "bob.williams@example.com"
-//    ),
-//    coachableSet = 3,
-//    status = "rejected"
-//)
 //
-//val c4 = CoachableSet(
-//    id = "4",
-//    title = "Public Speaking",
-//    description = "Improve your speaking skills for presentations and public engagements.",
-//    nuggets = listOf(
-//        Nugget(
-//            id = "7",
-//            title = "Overcoming Stage Fright",
-//            youtubeUrl = "https://youtube.com/video7",
-//            description = "Techniques to conquer your fear of public speaking.",
-//            author = Author(
-//                UserDto(
-//                    id = 2,
-//                    firstName = "Alice",
-//                    lastName = "Johnson",
-//                    photoUrl = "https://example.com/images/alice_johnson.jpg",
-//                    email = "alice.johnson@example.com"
-//                )
-//            )
-//        ),
-//        Nugget(
-//            id = "8",
-//            title = "Engaging Your Audience",
-//            youtubeUrl = "https://youtube.com/video8",
-//            description = "How to engage and maintain the interest of your audience during a speech.",
-//            author = Author(
-//                UserDto(
-//                    id = 2,
-//                    firstName = "Alice",
-//                    lastName = "Johnson",
-//                    photoUrl = "https://example.com/images/alice_johnson.jpg",
-//                    email = "alice.johnson@example.com"
-//                )
-//            )
-//        )
-//    )
-//)
-//val request4 = RequestDto(
-//    id = "4",
+//val request1 = Request(
+//    id = 1,
 //    user = UserDto(
-//        id = 4,
-//        firstName = "Emma",
-//        lastName = "Taylor",
-//        photoUrl = "https://example.com/images/emma_taylor.jpg",
-//        email = "emma.taylor@example.com"
+//        id = 1,
+//        firstName = "John",
+//        lastName = "Doe",
+//        photoUrl = "https://example.com/images/john_doe.jpg",
+//        email = "john.doe@example.com"
 //    ),
-//    coachableSet = 4,
+//    coachableSet = c1,
 //    status = "pending"
 //)
-
-val sampleRequests = listOf(request1, request1, request1)
+//
+//val sampleRequests = listOf(request1, request1, request1)

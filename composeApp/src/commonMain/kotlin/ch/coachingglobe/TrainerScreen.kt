@@ -79,7 +79,7 @@ fun TrainerScreen(navController: NavController) {
 @Composable
 fun TrainerRequestsScreen() {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(sampleRequests) { request ->
+        items(emptyList<Request>()) { request ->
             RequestCard(request, {}, {})
         }
     }

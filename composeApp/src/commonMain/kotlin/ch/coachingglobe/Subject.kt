@@ -5,11 +5,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Subject(
     val id: Int = 1,
-    val id_legacy: String,
+    val id_legacy: String = "",
     val title: String,
     val description: String,
-    val subjects: List<Subject>? = null,
-    val coachableSets: List<CoachableSet>? = null
+    val subjects: List<SubjectDto>? = null,
+    val coachableSets: List<CoachableSetDto>? = null
 )
 
 @Serializable

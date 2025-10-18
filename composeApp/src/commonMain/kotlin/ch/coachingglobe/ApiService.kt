@@ -14,11 +14,6 @@ import kotlinx.serialization.json.Json
 
 class ApiService() {
 
-    companion object {
-        private const val API_KEY = "mQHG4eaiVC1IBAXpwZyIjB0q0WjfFwhpxQyxDmhyOvZ9WbfGvsygG9st"
-        private const val IMAGES_URL = "https://api.pexels.com/v1/search"
-    }
-
     private val client = HttpClient {
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true })
@@ -35,7 +30,7 @@ class ApiService() {
     }
 
     suspend fun loadData(): DataDto =
-        client.get("${getURL()}/subject") {
+        client.get("${getURL()}/data") {
             contentType(ContentType.Application.Json)
         }.body()
 
@@ -43,4 +38,7 @@ class ApiService() {
         client.get(url).body()
 }
 
-fun getURL() = "10.134.71.227:8081"
+fun getURL(): String {
+    return "http://10.134.71.227:8080"
+    return "http://192.168.60.58:8080"
+}

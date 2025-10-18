@@ -2,6 +2,7 @@ package ch.coachingglobe
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,47 +25,100 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SubjectScreen(
-    subject: Subject?,
+fun SubjectScreenWithSubjectsWithLoading(
+    title: String,
+    data: StateX<DataDto>?,
     onSubjectClicked: (Subject) -> Unit,
-    onCoachableSetClicked: (CoachableSet) -> Unit,
-    onBack: (() -> Unit)?
+    onBack: (() -> Unit)?,
 ) {
-    subject ?: return
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(subject.title) },
-                navigationIcon = {
-                    onBack?.let {
-                        IconButton(onClick = it) {
-                            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
-                        }
-                    }
-                }
-            )
+    GCScaffold(title, onBack) {
+        when (data) {
+            is StateX.Error<DataDto> -> {
+                Error(data)
+            }
+
+            is StateX.Loading<*> -> {
+                CircularProgressIndicator()
+            }
+
+            is StateX.Success<DataDto> -> {
+                SubjectList(
+                    subjects = data.data.subjects.map { it.toSubject(data.data) },
+                    onSubjectClicked = onSubjectClicked
+                )
+            }
+
+            null -> {}
         }
-    ) { paddingValues ->
+    }
+}
+
+@Composable
+private fun Error(data: StateX.Error<DataDto>) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "Error: ${data.error}",
+            color = MaterialTheme.colorScheme.error,
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SubjectListScreen(
+    title: String,
+    subjects: List<Subject>,
+    onSubjectClicked: (Subject) -> Unit,
+    onBack: (() -> Unit)?,
+) {
+    GCScaffold(title, onBack) {
+        SubjectList(subjects, onSubjectClicked)
+    }
+}
+
+@Composable
+private fun SubjectList(
+    subjects: List<Subject>,
+    onSubjectClicked: (Subject) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items(items = subjects) {
+            SubjectItem(it, onClick = { onSubjectClicked(it) })
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CoachableSetListScreen(
+    title: String,
+    coachableSetDto: List<CoachableSet>,
+    onSubjectClicked: (CoachableSet) -> Unit,
+    onBack: (() -> Unit)?,
+) {
+    GCScaffold(title, onBack) {
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
+            modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            val subjects = subject.subjects ?: emptyList()
-            items(items = subjects) {
-                SubjectItem(it, onClick = { onSubjectClicked(it) })
-            }
-
-            val coachableSets = subject.coachableSets ?: emptyList()
-            items(items = coachableSets) {
-                CoachableSetItem(it, onClick = { onCoachableSetClicked(it) })
+            items(items = coachableSetDto) {
+                CoachableSetItem(it, onClick = { onSubjectClicked(it) })
             }
         }
     }
