@@ -24,8 +24,8 @@ actual fun YouTubePlayer(videoId: String, modifier: Modifier) {
             WebView(context).apply {
                 settings.javaScriptEnabled = true
                 webViewClient = WebViewClient()
-                //loadUrl("https://www.youtube.com/embed/$videoId")
-                loadUrl("https://www.youtube.com/watch?v=Scjycn8wFgE")
+//                loadUrl("https://www.youtube.com/embed/$videoId")
+                loadUrl("https://www.youtube.com/embed/HBaDKRVa6KY")
             }
         }
     )

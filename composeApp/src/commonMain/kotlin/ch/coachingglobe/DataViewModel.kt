@@ -152,6 +152,10 @@ class DataViewModel : ViewModel() {
         updateMyNuggets(nuggetId, NuggetStatus.COACHING)
     }
 
+    fun onDeclineClicked(nuggetId: Int) {
+        updateMyNuggets(nuggetId, NuggetStatus.NONE)
+    }
+
     fun revertRequest(nuggetId: Int) {
         updateMyNuggets(nuggetId, NuggetStatus.NONE)
     }

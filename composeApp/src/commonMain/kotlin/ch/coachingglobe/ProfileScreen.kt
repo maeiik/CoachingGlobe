@@ -2,10 +2,19 @@ package ch.coachingglobe
 
 import GCImage
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
@@ -20,12 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextOverflow
-import io.kamel.image.KamelImage
-import io.kamel.image.asyncPainterResource
 
 @Composable
 fun ProfileScreen(
@@ -33,71 +39,76 @@ fun ProfileScreen(
     modifier: Modifier = Modifier,
     onEdit: () -> Unit = {}
 ) {
-    Card(
-        modifier = modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp)
+    GCScaffold(
+        title = "Profile",
+        onBack = null,
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                ProfileAvatar(
-                    photoUrl = profile.photoUrl,
-                    initials = initialsOf(profile),
-                    modifier = Modifier.size(88.dp)
-                )
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "${profile.firstName} ${profile.lastName}",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+        Card(
+            modifier = modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    ProfileAvatar(
+                        photoUrl = profile.photoUrl,
+                        initials = initialsOf(profile),
+                        modifier = Modifier.size(88.dp)
                     )
 
-                    if (!profile.location.isNullOrBlank()) {
-                        Text(
-                            text = profile.location,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = Color.Gray
-                        )
-                    }
+                    Spacer(modifier = Modifier.width(16.dp))
 
-                    if (!profile.bio.isNullOrBlank()) {
-                        Spacer(modifier = Modifier.height(8.dp))
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = profile.bio,
-                            style = MaterialTheme.typography.bodyLarge,
-                            maxLines = 3,
+                            text = "${profile.firstName} ${profile.lastName}",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
+
+                        if (!profile.location.isNullOrBlank()) {
+                            Text(
+                                text = profile.location,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = Color.Gray
+                            )
+                        }
+
+                        if (!profile.bio.isNullOrBlank()) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = profile.bio,
+                                style = MaterialTheme.typography.bodyLarge,
+                                maxLines = 3,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+
+                    IconButton(onClick = onEdit) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit profile"
+                        )
                     }
                 }
 
-                IconButton(onClick = onEdit) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit profile"
+                if (profile.hobbies.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Hobbies",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.SemiBold
                     )
-                }
-            }
 
-            if (profile.hobbies.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Hobbies",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold
-                )
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                FlowRow {
-                    profile.hobbies.forEach { hobby ->
-                        Chip(text = hobby)
+                    FlowRow {
+                        profile.hobbies.forEach { hobby ->
+                            Chip(text = hobby)
+                        }
                     }
                 }
             }

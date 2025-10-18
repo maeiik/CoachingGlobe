@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 data class Request(
     val id: Int,
     val user: UserDto,
-    val coachableSet: CoachableSet,
-    val status: String // E.g., "pending", "accepted", "rejected"
+    val nugget: Nugget,
+    val status: String? = null // E.g., "pending", "accepted", "rejected"
 )

@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import kotlinx.serialization.Serializable
 
@@ -77,10 +78,21 @@ fun TrainerScreen(navController: NavController) {
 }
 
 @Composable
-fun TrainerRequestsScreen() {
+fun TrainerRequestsScreen(viewModel: DataViewModel = LocalDataViewModel.current) {
+    val items =
+        viewModel.myNuggets.collectAsStateWithLifecycle().value.filter { it.value.status == DataViewModel.NuggetStatus.REQUESTED }
+            .map {
+                Request(
+                    1,
+                    UserDto(1, "Coach", "Zimmerwald"), it.value.nugget
+                )
+            }
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(emptyList<Request>()) { request ->
-            RequestCard(request, {}, {})
+        items(items) { request ->
+            RequestCard(
+                request = request,
+                onAccept = { viewModel.onAcceptClicked(request.nugget.id) },
+                onDecline = { viewModel.onDeclineClicked(request.nugget.id) })
         }
     }
 }
@@ -115,7 +127,7 @@ fun RequestCard(
     onDecline: () -> Unit
 ) {
     val user = request.user
-    val coachableSet = request.coachableSet
+    val nugget = request.nugget
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -143,7 +155,7 @@ fun RequestCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Which course: ${coachableSet.title}",
+                    text = "Which course: ${nugget.title}",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }

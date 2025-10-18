@@ -33,9 +33,15 @@ data class CoachableSetDto(
         title = title,
         description = description,
         nuggets = data.nuggets.filter { nuggets.contains(it.id) }.map { it.toNugget(data) },
-        author = data.authors.first { it.user.id == author }.toAuthor(data),
+        author = data.authors.firstOrNull { it.user.id == author }?.toAuthor(data) ?: exampleAuthor,
     )
 }
+
+val exampleAuthor = Author(
+    user = UserDto(0, "First", "Last"),
+    descr = "No description",
+    profession = "No profession"
+)
 
 @Serializable
 data class NuggetDto(
@@ -51,7 +57,7 @@ data class NuggetDto(
         title = title,
         youtubeUrl = youtubeUrl,
         description = description,
-        author = data.authors.first { it.user.id == author }.toAuthor(data),
+        author = data.authors.firstOrNull { it.user.id == author }?.toAuthor(data) ?: exampleAuthor,
     )
 }
 
@@ -62,7 +68,7 @@ data class AuthorDto(
     val profession: String,
 ) {
     fun toAuthor(data: DataDto) = Author(
-        user = data.authors.first { it.user == user }.user,
+        user = user,
         descr = descr,
         profession = profession,
     )

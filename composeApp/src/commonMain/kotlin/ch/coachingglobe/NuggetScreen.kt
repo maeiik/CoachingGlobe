@@ -90,35 +90,7 @@ fun NuggetScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Author card
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Row(
-                    modifier = Modifier
-                        .padding(12.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    val author = nugget.author
-                    GCImage(
-                        author.user,
-                        modifier = Modifier
-                            .size(64.dp)
-                            .clip(CircleShape)
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = author.user.name,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Text(
-                            text = "Profession: ${author.profession}",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = author.descr, style = MaterialTheme.typography.bodySmall)
-                    }
-                }
-            }
+            AuthorCard(nugget.author)
 
             Spacer(modifier = Modifier.height(16.dp))
             val status = viewModel.myNuggets.collectAsStateWithLifecycle().value[nugget.id]?.status
@@ -163,6 +135,38 @@ fun NuggetScreen(
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun AuthorCard(author: Author) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            GCImage(
+                author.user,
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = author.user.name,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = "Profession: ${author.profession}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = author.descr, style = MaterialTheme.typography.bodySmall)
             }
         }
     }

@@ -2,6 +2,8 @@ package ch.coachingglobe
 
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -62,31 +64,56 @@ fun App() {
                         startDestination = GlobalCoachingNavigationGraph.ExploreGraph.Explore
                     ) {
                         composable<GlobalCoachingNavigationGraph.ExploreGraph.Explore> {
-                            ExploreScreen {
-                                navController.navigate(
-                                    SubjectNav(
-                                        1,
-                                        "coaching_globe"
+                            SubjectScreenWithSubjectsWithLoading(
+                                "GlobalCoaching",
+                                dataViewModel.dataResponse.collectAsState().value,
+                                onBack = null,
+                                onSubjectClicked = { subject ->
+                                    navController.navigate(
+                                        SubjectNav(
+                                            subject.id,
+                                            subject.id_legacy
+                                        )
                                     )
-                                )
-                            }
-
+                                },
+                            )
                         }
 
                         composable<SubjectNav> {
-                            val subject = it.toRoute<SubjectNav>()
-                            SubjectScreen(
-                                subject = dataViewModel.getSubject(subject.id),
-                                onBack = if (subject.title != "coaching_globe") {
-                                    { navController.popBackStack() }
-                                } else null,
-                                onSubjectClicked = { subject ->
-                                    navController.navigate(SubjectNav(0, subject.id_legacy))
-                                },
-                                onCoachableSetClicked = { coachableSet ->
-                                    navController.navigate(CoachableSetNav(coachableSet.id))
-                                }
-                            )
+                            val subjectNav = it.toRoute<SubjectNav>()
+                            val subject = dataViewModel.getSubject(subjectNav.id)
+                            if (subject?.subjects?.isNotEmpty() == true) {
+                                SubjectListScreen(
+                                    subject.title,
+                                    subject.subjects.map { it.toSubject(dataViewModel.data.value!!) },
+                                    onBack = { navController.popBackStack() },
+                                    onSubjectClicked = { subject ->
+                                        navController.navigate(
+                                            SubjectNav(
+                                                subject.id,
+                                                subject.id_legacy
+                                            )
+                                        )
+                                    },
+                                )
+                            } else if (subject?.coachableSets != null) {
+                                CoachableSetListScreen(
+                                    title = subject.title,
+                                    coachableSetDto = subject.coachableSets.map {
+                                        it.toCoachableSet(
+                                            dataViewModel.data.value!!
+                                        )
+                                    },
+                                    onBack = if (subject.id != 1) {
+                                        { navController.popBackStack() }
+                                    } else null,
+                                    onCoachableSetClicked = { subject ->
+                                        navController.navigate(
+                                            CoachableSetNav(subject.id)
+                                        )
+                                    },
+                                )
+                            }
                         }
 
                         composable<CoachableSetNav> {
@@ -106,8 +133,6 @@ fun App() {
                         composable<GlobalCoachingNavigationGraph.TrainerGraph.Trainer> {
                             TrainerScreen(navController)
                         }
-
-
 
                         composable<GlobalCoachingNavigationGraph.ProfileGraph.Profile> {
                             ProfileScreen(
@@ -130,6 +155,33 @@ fun App() {
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun GCScaffold(
+    title: String,
+    onBack: (() -> Unit)? = null,
+    content: @Composable () -> Unit
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(title) },
+                navigationIcon = {
+                    onBack?.let {
+                        IconButton(onClick = it) {
+                            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                        }
+                    }
+                }
+            )
+        }
+    ) {
+        Box(modifier = Modifier.padding(it)) {
+            content.invoke()
         }
     }
 }

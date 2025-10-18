@@ -39,7 +39,13 @@ fun CoachableSetScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Nuggets", maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                title = {
+                    Text(
+                        text = coachableSetDto.title,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
@@ -59,6 +65,7 @@ fun CoachableSetScreen(
             items(nuggets) { nugget ->
                 NuggetCard(nugget, onOpen)
             }
+            item { AuthorCard(coachableSetDto.author) }
         }
     }
 }
