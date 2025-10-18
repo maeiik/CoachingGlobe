@@ -71,3 +71,11 @@ data class TrainerDto(
     val coachedSets: List<Int>,
     val requests: List<RequestDto>
 )
+
+@Serializable
+data class DataDto(
+    val subjects: List<SubjectDto>,
+    val coachableSets: List<CoachableSetDto>,
+    val nuggets: List<NuggetDto>,
+    val authors: List<AuthorDto>,
+)

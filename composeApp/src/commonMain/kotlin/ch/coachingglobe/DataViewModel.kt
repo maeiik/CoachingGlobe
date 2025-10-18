@@ -94,6 +94,14 @@ class DataViewModel : ViewModel() {
         val status: NuggetStatus,
     )
 
+    fun loadMyGroups(forceReload: Boolean = false) {
+        handleRequest(response = groups, name = "loadMyGroups") {
+            apiService.loadMyGroups(forceReload = forceReload).groups
+        }
+    }
+
+    private val dataResponse = ResponseX<DataDto>()
+
     private val myNuggetsMutable = MutableStateFlow<Map<Int, NuggetWithStatus>>(emptyMap())
     val myNuggets = myNuggetsMutable.asStateFlow()
 
