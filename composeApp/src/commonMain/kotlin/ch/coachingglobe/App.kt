@@ -2,10 +2,6 @@ package ch.coachingglobe
 
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,23 +15,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 
-sealed class BottomNavItem(
-    val route: String,
-    val label: String,
-    val icon: androidx.compose.ui.graphics.vector.ImageVector
-) {
-    object Explore : BottomNavItem("explore", "Explore", Icons.Filled.Place)
-    object MySpace : BottomNavItem("myspace", "My Space", Icons.Filled.CheckCircle)
-    object Profile : BottomNavItem("profile", "Profile", Icons.Filled.Person)
-}
-
-private object Routes {
-    const val Explore = "explore" // reuse Explore as nuggets list
-    const val NuggetDetailBase = "nugget"
-    const val MySpace = "myspace"
-    const val Profile = "profile"
-}
-
 val LocalDataViewModel = staticCompositionLocalOf<DataViewModel> {
     error("No DataViewModel provided")
 }
@@ -46,28 +25,28 @@ fun App() {
     CompositionLocalProvider(LocalDataViewModel provides dataViewModel) {
         AppTheme {
             val navController = rememberNavController()
-            val items = listOf(BottomNavItem.Explore, BottomNavItem.MySpace, BottomNavItem.Profile)
+            val items = GlobalCoachingNavigationGraph.items
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
 
             Scaffold(
                 bottomBar = {
                     NavigationBar {
-                        items.forEach { item ->
-                            val selected = when {
-                                currentRoute == null -> false
-                                currentRoute.startsWith(Routes.NuggetDetailBase) -> true
-                                else -> currentRoute == item.route
-                            }
+                        items.forEach { (item, icon) ->
+                            val title = item::class.simpleName ?: "Unknown"
                             NavigationBarItem(
-                                selected = selected,
+                                selected = currentRoute?.contains("${title}Graph") == true,
                                 onClick = {
-                                    navController.navigate(item.route) {
+                                    navController.navigate(item) {
+                                        navController.graph.startDestinationRoute?.let {
+                                            popUpTo(it) { saveState = true }
+                                        }
                                         launchSingleTop = true
+                                        restoreState = true
                                     }
                                 },
-                                icon = { Icon(item.icon, contentDescription = item.label) },
-                                label = { Text(item.label) }
+                                icon = { Icon(icon, contentDescription = title) },
+                                label = { Text(title) }
                             )
                         }
                     }
@@ -81,11 +60,16 @@ fun App() {
                 ) {
                     NavHost(
                         navController = navController,
-                        startDestination = SubjectNav("coaching_globe")
+                        startDestination = GlobalCoachingNavigationGraph.ExploreGraph.Explore
                     ) {
+                        composable<GlobalCoachingNavigationGraph.ExploreGraph.Explore> {
+                            ExploreScreen { navController.navigate(SubjectNav("coaching_globe")) }
+
+                        }
+
                         composable<SubjectNav> {
                             val subject = it.toRoute<SubjectNav>()
-                            ExploreScreen(
+                            SubjectScreen(
                                 subject = dataViewModel.getSubject(subject.id)!!,
                                 onBack = if (subject.id != "coaching_globe") {
                                     { navController.popBackStack() }
@@ -109,11 +93,11 @@ fun App() {
                             )
                         }
 
-                        composable(Routes.MySpace) {
+                        composable<GlobalCoachingNavigationGraph.MySpaceGraph.MySpace> {
                             MySpaceScreen()
                         }
 
-                        composable(Routes.Profile) {
+                        composable<GlobalCoachingNavigationGraph.ProfileGraph.Profile> {
                             ProfileScreen(
                                 profile = ProfileDto(
                                     firstName = "John",
