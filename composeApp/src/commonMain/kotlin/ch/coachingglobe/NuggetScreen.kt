@@ -25,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.runtime.saveable.autoSaver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.graphics.Color
 
@@ -32,7 +33,7 @@ import androidx.compose.ui.graphics.Color
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NuggetScreen(
-    nugget: NuggetDto,
+    nugget: Nugget,
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
     viewModel: DataViewModel = LocalDataViewModel.current
@@ -82,17 +83,12 @@ fun NuggetScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-
+            Text(
+                text = nugget.description,
+                style = MaterialTheme.typography.bodyMedium,
+                lineHeight = 20.sp
+            )
             Spacer(modifier = Modifier.height(16.dp))
-
-            nugget.description?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodyMedium,
-                    lineHeight = 20.sp
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-            }
 
             // Author card
             Card(modifier = Modifier.fillMaxWidth()) {
@@ -103,34 +99,24 @@ fun NuggetScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     val author = nugget.author
-                    if (!author?.photoUrl.isNullOrBlank()) {
-                        GCImage(
-                            author.photoUrl,
-                            modifier = Modifier
-                                .size(64.dp)
-                                .clip(CircleShape)
-                        )
-                    } else {
-                        Kuerzel(author)
-                    }
-
+                    GCImage(
+                        author.user,
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clip(CircleShape)
+                    )
                     Spacer(modifier = Modifier.width(12.dp))
-
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "${author?.firstName} ${author?.lastName}",
+                            text = author.user.name,
                             fontWeight = FontWeight.SemiBold
                         )
-                        author?.title?.let {
-                            Text(
-                                text = it,
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
-                        author?.bio?.let {
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(text = it, style = MaterialTheme.typography.bodySmall)
-                        }
+                        Text(
+                            text = "Profession: ${author.profession}",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(text = author.descr, style = MaterialTheme.typography.bodySmall)
                     }
                 }
             }
@@ -184,7 +170,7 @@ fun NuggetScreen(
 }
 
 @Composable
-fun Kuerzel(author: AuthorDto?) {
+fun Kuerzel(user: UserDto) {
     Box(
         modifier = Modifier
             .size(64.dp)
@@ -192,7 +178,7 @@ fun Kuerzel(author: AuthorDto?) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = initialsOf(author),
+            text = initialsOf(user),
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
         )
@@ -221,8 +207,8 @@ fun extractYoutubeId(url: String?): String? {
     return a
 }
 
-private fun initialsOf(author: AuthorDto?): String {
-    val f = author?.firstName?.firstOrNull()?.uppercaseChar() ?: return "?"
-    val l = author.lastName.firstOrNull()?.uppercaseChar() ?: return "$f"
+private fun initialsOf(user: UserDto): String {
+    val f = user.firstName.firstOrNull()?.uppercaseChar() ?: return "?"
+    val l = user.lastName.firstOrNull()?.uppercaseChar() ?: return "$f"
     return "$f$l"
 }

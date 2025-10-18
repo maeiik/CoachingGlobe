@@ -2,15 +2,13 @@ package ch.coachingglobe
 
 import kotlinx.serialization.Serializable
 
-
 @Serializable
-data class NuggetDto(
+data class CoachableSet(
     val id: String,
     val title: String,
-    val youtubeUrl: String? = null,
     val description: String? = null,
-    val author: AuthorDto? = null,
+    val nuggets: List<Nugget>,
 )
 
 @Serializable
-data class NuggetNav(val id: String)
+data class CoachableSetNav(val id: String)

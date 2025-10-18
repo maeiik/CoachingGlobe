@@ -23,8 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import io.kamel.image.asyncPainterResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,7 +30,7 @@ fun CoachableSetScreen(
     id: String,
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
-    onOpen: (NuggetDto) -> Unit = {},
+    onOpen: (Nugget) -> Unit = {},
     dataViewModel: DataViewModel = LocalDataViewModel.current,
 ) {
     println("CoachableSetScreen: loading coachable set with id $id")
@@ -67,8 +65,8 @@ fun CoachableSetScreen(
 
 @Composable
 fun NuggetCard(
-    nugget: NuggetDto,
-    onOpen: (NuggetDto) -> Unit
+    nugget: Nugget,
+    onOpen: (Nugget) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -118,7 +116,7 @@ fun NuggetCard(
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "${nugget.author?.firstName} ${nugget.author?.lastName}",
+                    text = nugget.author.user.name,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

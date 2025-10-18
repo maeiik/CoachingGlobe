@@ -29,9 +29,9 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubjectScreen(
-    subject: SubjectDto,
-    onSubjectClicked: (SubjectDto) -> Unit,
-    onCoachableSetClicked: (CoachableSetDto) -> Unit,
+    subject: Subject,
+    onSubjectClicked: (Subject) -> Unit,
+    onCoachableSetClicked: (CoachableSet) -> Unit,
     onBack: (() -> Unit)?
 ) {
     Scaffold(
@@ -69,7 +69,7 @@ fun SubjectScreen(
 }
 
 @Composable
-fun CoachableSetItem(set: CoachableSetDto, onClick: () -> Unit) {
+fun CoachableSetItem(set: CoachableSet, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -93,7 +93,7 @@ fun CoachableSetItem(set: CoachableSetDto, onClick: () -> Unit) {
 }
 
 @Composable
-fun SubjectItem(subject: SubjectDto, onClick: () -> Unit) {
+fun SubjectItem(subject: Subject, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()

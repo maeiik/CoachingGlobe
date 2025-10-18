@@ -3,12 +3,12 @@ package ch.coachingglobe
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SubjectDto(
+data class Subject(
     val id: String,
     val title: String,
     val description: String,
-    val subjects: List<SubjectDto>? = null,
-    val coachableSets: List<CoachableSetDto>? = null
+    val subjects: List<Subject>? = null,
+    val coachableSets: List<CoachableSet>? = null
 )
 
 @Serializable

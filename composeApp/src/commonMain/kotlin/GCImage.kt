@@ -3,6 +3,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import ch.coachingglobe.Kuerzel
+import ch.coachingglobe.UserDto
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 
@@ -18,4 +19,19 @@ fun GCImage(photoUrl: String, modifier: Modifier = Modifier) {
 //        modifier = modifier
 //    )
     Kuerzel(photoUrl)
+}
+
+@Composable
+fun GCImage(user: UserDto, modifier: Modifier = Modifier) {
+    if (user.photoUrl != null && false) {
+        KamelImage(
+            resource = { asyncPainterResource(url) },
+            contentDescription = "Profile photo",
+            contentScale = ContentScale.Crop,
+            onFailure = { Text(text = "Image failed to load") },
+            modifier = modifier
+        )
+    } else {
+        Kuerzel(user)
+    }
 }

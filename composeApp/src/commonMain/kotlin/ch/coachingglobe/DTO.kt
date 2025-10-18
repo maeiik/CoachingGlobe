@@ -15,7 +15,7 @@ data class SubjectDto(
 data class CoachableSetDto(
     val id: Int,
     val title: String,
-    val description: String? = null,
+    val description: String,
     val nuggets: List<Int>,
 )
 
@@ -23,8 +23,8 @@ data class CoachableSetDto(
 data class NuggetDto(
     val id: String,
     val title: String,
-    val youtubeUrl: String? = null,
-    val description: String? = null,
+    val youtubeUrl: String,
+    val description: String,
     val author: Int,
 )
 
@@ -37,12 +37,14 @@ data class AuthorDto(
 
 @Serializable
 data class UserDto(
-    val id: String,
+    val id: Int,
     val firstName: String,
     val lastName: String,
     val photoUrl: String? = null,
-    val email: String,
-)
+    val email: String = "",
+) {
+    val name = "$firstName $lastName"
+}
 
 @Serializable
 data class RequestDto(
