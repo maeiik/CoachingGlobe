@@ -12,3 +12,7 @@ actual fun getPlatform(): Platform = JVMPlatform()
 @Composable
 actual fun YouTubePlayer(videoId: String, modifier: Modifier) {
 }
+
+@Composable
+actual fun SetStatusBarColor() {
+}

@@ -2,6 +2,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import ch.coachingglobe.Kuerzel
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 
@@ -16,5 +17,5 @@ fun GCImage(photoUrl: String, modifier: Modifier = Modifier) {
 //        onFailure = { Text(text = "Image failed to load") },
 //        modifier = modifier
 //    )
-    Text(text = "GCImage Placeholder")
+    Kuerzel(photoUrl)
 }

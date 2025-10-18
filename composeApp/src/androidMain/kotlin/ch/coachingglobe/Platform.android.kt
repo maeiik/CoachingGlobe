@@ -5,7 +5,9 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidView
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 class AndroidPlatform : Platform {
     override val name: String = "Android ${Build.VERSION.SDK_INT}"
@@ -27,4 +29,13 @@ actual fun YouTubePlayer(videoId: String, modifier: Modifier) {
             }
         }
     )
+}
+
+@Composable
+actual fun SetStatusBarColor() {
+    // Remember SystemUiController
+    val systemUiController = rememberSystemUiController()
+
+    // Set status bar color
+    systemUiController.setSystemBarsColor(color = Color.White)
 }

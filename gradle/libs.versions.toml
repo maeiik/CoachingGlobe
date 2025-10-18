@@ -1,4 +1,5 @@
 [versions]
+accompanistSystemuicontroller = "0.36.0"
 agp = "8.11.2"
 android-compileSdk = "36"
 android-minSdk = "24"
@@ -21,6 +22,7 @@ materialIconsExtended = "1.7.3"
 navigationCompose = "2.9.1"
 
 [libraries]
+accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 coil3-compose-v300alpha06 = { module = "io.coil-kt:coil3-compose", version.ref = "coil3ComposeVersion" }
 kamel-image = { module = "media.kamel:kamel-image", version.ref = "kamelImage" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

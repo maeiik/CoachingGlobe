@@ -11,3 +11,6 @@ expect fun getPlatform(): Platform
 
 @Composable
 expect fun YouTubePlayer(videoId: String, modifier: Modifier = Modifier)
+
+@Composable
+expect fun SetStatusBarColor()

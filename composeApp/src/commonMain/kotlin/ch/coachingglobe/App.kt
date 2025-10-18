@@ -22,6 +22,7 @@ val LocalDataViewModel = staticCompositionLocalOf<DataViewModel> {
 
 @Composable
 fun App() {
+    SetStatusBarColor()
     val dataViewModel = remember { DataViewModel() }
     CompositionLocalProvider(LocalDataViewModel provides dataViewModel) {
         AppTheme {

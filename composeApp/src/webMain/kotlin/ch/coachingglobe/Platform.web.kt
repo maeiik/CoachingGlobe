@@ -6,3 +6,7 @@ import androidx.compose.ui.Modifier
 @Composable
 actual fun YouTubePlayer(videoId: String, modifier: Modifier) {
 }
+
+@Composable
+actual fun SetStatusBarColor() {
+}
