@@ -131,7 +131,8 @@ class DataViewModel : ViewModel() {
     }
 
     fun getNugget(id: Int): Nugget {
-        return sampleNuggets.find { it.id == id } ?: sampleNuggets.first()
+        val data = data.value!!
+        return data.nuggets.firstOrNull { it.id == id }?.toNugget(data)!!
     }
 
     fun getSubject(id: Int): Subject? {

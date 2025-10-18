@@ -33,7 +33,6 @@ fun CoachableSetScreen(
     onOpen: (Nugget) -> Unit = {},
     dataViewModel: DataViewModel = LocalDataViewModel.current,
 ) {
-    println("CoachableSetScreen: loading coachable set with id $id")
     val coachableSetDto = dataViewModel.getCoachableSet(id)!!
     val nuggets = coachableSetDto.nuggets
     Scaffold(

@@ -38,22 +38,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import ch.coachingglobe.mySpacesTabs.Empty
 import kotlinx.serialization.Serializable
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrainerScreen(navController: NavController) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Trainer") },
-            )
-        },
-    ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+    GCScaffold("Trainer", null) {
+        Column(modifier = Modifier.fillMaxSize()) {
 
-            // TabView
             val tabTitles = listOf("Trainer Requests", "Trainer Overview")
             val pagerState = rememberPagerState(0, 0f, { tabTitles.size })
 
@@ -69,8 +63,8 @@ fun TrainerScreen(navController: NavController) {
 
             HorizontalPager(state = pagerState) { page ->
                 when (page) {
-                    0 -> TrainerRequestsScreen() // Trainer Requests tab
-                    1 -> TrainerOverviewScreen() // Trainer Overview tab
+                    0 -> TrainerRequestsScreen()
+                    1 -> TrainerOverviewScreen()
                 }
             }
         }
@@ -99,25 +93,7 @@ fun TrainerRequestsScreen(viewModel: DataViewModel = LocalDataViewModel.current)
 
 @Composable
 fun TrainerOverviewScreen() {
-    // For simplicity, we'll use mock data
-    val completedSessions = 10
-    val upcomingSessions = 5
-
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text(text = "Trainer Overview", style = MaterialTheme.typography.bodyMedium)
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = "Completed Sessions: $completedSessions",
-            style = MaterialTheme.typography.bodyMedium
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "Upcoming Sessions: $upcomingSessions",
-            style = MaterialTheme.typography.bodyMedium
-        )
-    }
+    Empty()
 }
 
 @Composable
@@ -140,29 +116,24 @@ fun RequestCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // User Image
-            GCImage("https://via.placeholder.com/150")
+            GCImage(user)
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // User Info and Course Info
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = "Request from ${user.name}",
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Which course: ${nugget.title}",
+                    text = "Course: ${nugget.title}",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // Accept and Decline Buttons
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
