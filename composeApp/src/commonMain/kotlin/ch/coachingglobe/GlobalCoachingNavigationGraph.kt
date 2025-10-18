@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Task
 import kotlinx.serialization.Serializable
 
 
@@ -14,6 +15,7 @@ sealed interface GlobalCoachingNavigationGraph {
         val items = mapOf(
             ExploreGraph.Explore to Icons.Filled.Place,
             MySpaceGraph.MySpace to Icons.Filled.CheckCircle,
+            TrainerGraph.Trainer to Icons.Filled.Task,
             ProfileGraph.Profile to Icons.Filled.Person,
         )
     }
@@ -45,6 +47,7 @@ sealed interface GlobalCoachingNavigationGraph {
     sealed class TrainerGraph : GlobalCoachingNavigationGraph {
         @Serializable
         data object Trainer : TrainerGraph()
+
     }
 
     @Serializable

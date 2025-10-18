@@ -126,8 +126,3 @@ fun App() {
         }
     }
 }
-
-@Composable
-fun TrainerScreen(x0: NavHostController) {
-    TODO("Not yet implemented")
-}
