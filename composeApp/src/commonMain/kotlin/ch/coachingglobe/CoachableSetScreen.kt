@@ -59,61 +59,69 @@ fun CoachableSetScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(nuggets) { nugget ->
-                Card(
+                NuggetCard(nugget, onOpen)
+            }
+        }
+    }
+}
+
+@Composable
+fun NuggetCard(
+    nugget: NuggetDto,
+    onOpen: (NuggetDto) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onOpen(nugget) },
+        shape = RoundedCornerShape(10.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val videoId = extractYoutubeId(nugget.youtubeUrl)
+            if (videoId != null) {
+                GCImage(
+                    "https://img.youtube.com/vi/$videoId/hqdefault.jpg",
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onOpen(nugget) },
-                    shape = RoundedCornerShape(10.dp)
+                        .size(96.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                )
+            } else {
+                // simple placeholder box when no thumbnail available
+                Box(
+                    modifier = Modifier
+                        .size(96.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .padding(0.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .padding(12.dp)
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        val videoId = extractYoutubeId(nugget.youtubeUrl)
-                        if (videoId != null) {
-                            GCImage(
-                                "https://img.youtube.com/vi/$videoId/hqdefault.jpg",
-                                modifier = Modifier
-                                    .size(96.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                            )
-                        } else {
-                            // simple placeholder box when no thumbnail available
-                            Box(
-                                modifier = Modifier
-                                    .size(96.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .padding(0.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    "No\nThumbnail",
-                                    color = Color.Gray,
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.width(12.dp))
-
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = nugget.title,
-                                style = MaterialTheme.typography.titleMedium,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            Spacer(modifier = Modifier.height(6.dp))
-                            Text(
-                                text = "${nugget.author?.firstName} ${nugget.author?.lastName}",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
+                    Text(
+                        "No\nThumbnail",
+                        color = Color.Gray,
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = nugget.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = "${nugget.author?.firstName} ${nugget.author?.lastName}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }

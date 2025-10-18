@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import ch.coachingglobe.ui.theme.AppTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -51,11 +52,9 @@ fun App() {
                         }
                     }
                 }
-            ) { innerPadding ->
+            ) {
                 Box(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize(),
+                    modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     NavHost(
@@ -94,8 +93,14 @@ fun App() {
                         }
 
                         composable<GlobalCoachingNavigationGraph.MySpaceGraph.MySpace> {
-                            MySpaceScreen()
+                            MySpaceScreen(navController)
                         }
+
+                        composable<GlobalCoachingNavigationGraph.TrainerGraph.Trainer> {
+                            TrainerScreen(navController)
+                        }
+
+
 
                         composable<GlobalCoachingNavigationGraph.ProfileGraph.Profile> {
                             ProfileScreen(
@@ -113,7 +118,6 @@ fun App() {
                             NuggetScreen(
                                 nugget = dataViewModel.getNugget(nugget.id),
                                 onBack = { navController.popBackStack() },
-                                onCouchMe = { /* handle action */ }
                             )
                         }
                     }
@@ -121,4 +125,9 @@ fun App() {
             }
         }
     }
+}
+
+@Composable
+fun TrainerScreen(x0: NavHostController) {
+    TODO("Not yet implemented")
 }

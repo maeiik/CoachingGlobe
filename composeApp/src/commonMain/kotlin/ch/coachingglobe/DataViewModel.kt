@@ -1,6 +1,9 @@
 package ch.coachingglobe
 
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlin.collections.plus
 
 class DataViewModel : ViewModel() {
     val sampleNuggets: List<NuggetDto> = listOf(
@@ -73,6 +76,30 @@ class DataViewModel : ViewModel() {
         )
     )
 
+    enum class NuggetStatus {
+        NONE,
+        REQUESTED,
+        COACHING,
+        FINISHED,
+    }
+
+    data class NuggetWithStatus(
+        val nugget: NuggetDto,
+        val status: NuggetStatus,
+    )
+
+    private val myNuggetsMutable = MutableStateFlow<Map<String, NuggetWithStatus>>(emptyMap())
+    val myNuggets = myNuggetsMutable.asStateFlow()
+
+    private fun updateMyNuggets(nuggetId: String, status: NuggetStatus) {
+        myNuggetsMutable.value =
+            myNuggetsMutable.value + (nuggetId to myNuggetsMutable.value.getOrElse(
+                nuggetId,
+                { NuggetWithStatus(getNugget(nuggetId), NuggetStatus.NONE) }
+            ).copy(status = status)
+                    )
+    }
+
     fun getNugget(id: String): NuggetDto {
         return sampleNuggets.find { it.id == id } ?: sampleNuggets.first()
     }
@@ -91,12 +118,27 @@ class DataViewModel : ViewModel() {
         return null
     }
 
-    fun getCoachableSet(id: String, subjectToSearch: SubjectDto = subjectExamples): CoachableSetDto? {
+    fun getCoachableSet(
+        id: String,
+        subjectToSearch: SubjectDto = subjectExamples
+    ): CoachableSetDto? {
         subjectToSearch.coachableSets?.firstOrNull { it.id == id }?.let { return it }
         for (subject in subjectToSearch.subjects ?: emptyList()) {
             val result = getCoachableSet(id, subject)
             if (result != null) return result
         }
         return null
+    }
+
+    fun onCouchMeClicked(nuggetId: String) {
+        updateMyNuggets(nuggetId, NuggetStatus.REQUESTED)
+    }
+
+    fun onAcceptClicked(nuggetId: String) {
+        updateMyNuggets(nuggetId, NuggetStatus.COACHING)
+    }
+
+    fun revertRequest(nuggetId: String) {
+        updateMyNuggets(nuggetId, NuggetStatus.NONE)
     }
 }

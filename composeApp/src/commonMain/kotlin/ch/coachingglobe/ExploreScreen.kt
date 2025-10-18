@@ -9,6 +9,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 
@@ -22,8 +23,10 @@ fun ExploreScreen(onClick: () -> Unit) {
             )
         }
     ) { paddingValues ->
-        // Content goes here
-        Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
+        Box(
+            modifier = Modifier.padding(paddingValues).fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
             Button(onClick = onClick) {
                 Text("Go to Subjects")
             }

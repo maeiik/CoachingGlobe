@@ -14,7 +14,6 @@ class AndroidPlatform : Platform {
 actual fun getPlatform(): Platform = AndroidPlatform()
 
 
-
 @Composable
 actual fun YouTubePlayer(videoId: String, modifier: Modifier) {
     AndroidView(
@@ -23,7 +22,8 @@ actual fun YouTubePlayer(videoId: String, modifier: Modifier) {
             WebView(context).apply {
                 settings.javaScriptEnabled = true
                 webViewClient = WebViewClient()
-                loadUrl("https://www.youtube.com/embed/$videoId")
+                //loadUrl("https://www.youtube.com/embed/$videoId")
+                loadUrl("https://www.youtube.com/watch?v=Scjycn8wFgE")
             }
         }
     )

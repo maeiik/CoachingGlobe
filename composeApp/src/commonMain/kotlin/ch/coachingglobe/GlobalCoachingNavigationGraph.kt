@@ -40,6 +40,13 @@ sealed interface GlobalCoachingNavigationGraph {
         data object MySpace : MySpaceGraph()
     }
 
+
+    @Serializable
+    sealed class TrainerGraph : GlobalCoachingNavigationGraph {
+        @Serializable
+        data object Trainer : TrainerGraph()
+    }
+
     @Serializable
     sealed class ProfileGraph : GlobalCoachingNavigationGraph {
         @Serializable

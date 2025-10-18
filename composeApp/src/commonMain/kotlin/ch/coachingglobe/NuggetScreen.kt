@@ -17,15 +17,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
-import io.kamel.image.KamelImage
-import io.kamel.image.asyncPainterResource
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.ui.graphics.BlendMode.Companion.Color
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,7 +35,7 @@ fun NuggetScreen(
     nugget: NuggetDto,
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
-    onCouchMe: () -> Unit = {}
+    viewModel: DataViewModel = LocalDataViewModel.current
 ) {
     Scaffold(
         topBar = {
@@ -79,9 +81,6 @@ fun NuggetScreen(
             }
 
             Spacer(modifier = Modifier.height(12.dp))
-
-
-
 
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -148,9 +147,48 @@ fun NuggetScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+            val status = viewModel.myNuggets.collectAsStateWithLifecycle().value[nugget.id]?.status
+            when (status) {
+                null, DataViewModel.NuggetStatus.NONE -> {
+                    Button(
+                        onClick = { viewModel.onCouchMeClicked(nugget.id) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = "couch me")
+                    }
+                }
 
-            Button(onClick = onCouchMe, modifier = Modifier.fillMaxWidth()) {
-                Text(text = "couch me")
+                DataViewModel.NuggetStatus.REQUESTED -> {
+                    Button(
+                        onClick = { viewModel.revertRequest(nugget.id) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = "Revert Request")
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    OutlinedButton(
+                        onClick = { viewModel.onAcceptClicked(nugget.id) },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(text = "Accept Request (only for demo)")
+                    }
+                }
+
+                DataViewModel.NuggetStatus.COACHING -> {
+                    Text(
+                        text = "You are being coached this nugget.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+
+                DataViewModel.NuggetStatus.FINISHED -> {
+                    Text(
+                        text = "You have finished this nugget.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
         }
     }
@@ -163,6 +201,6 @@ fun extractYoutubeId(url: String?): String? {
 
 private fun initialsOf(author: AuthorDto?): String {
     val f = author?.firstName?.firstOrNull()?.uppercaseChar() ?: return "?"
-    val l = author?.lastName?.firstOrNull()?.uppercaseChar() ?: return "$f"
+    val l = author.lastName.firstOrNull()?.uppercaseChar() ?: return "$f"
     return "$f$l"
 }
