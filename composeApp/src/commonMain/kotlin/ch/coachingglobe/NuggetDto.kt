@@ -7,9 +7,9 @@ import kotlinx.serialization.Serializable
 data class NuggetDto(
     val id: String,
     val title: String,
-    val youtubeUrl: String,
+    val youtubeUrl: String? = null,
     val description: String? = null,
-    val author: AuthorDto
+    val author: AuthorDto? = null,
 )
 
 @Serializable
