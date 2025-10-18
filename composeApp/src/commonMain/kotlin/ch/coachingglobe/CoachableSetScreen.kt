@@ -35,7 +35,8 @@ fun CoachableSetScreen(
     onOpen: (NuggetDto) -> Unit = {},
     dataViewModel: DataViewModel = LocalDataViewModel.current,
 ) {
-    val coachableSetDto = dataViewModel.getCoachableSetById(id)
+    println("CoachableSetScreen: loading coachable set with id $id")
+    val coachableSetDto = dataViewModel.getCoachableSet(id)!!
     val nuggets = coachableSetDto.nuggets
     Scaffold(
         topBar = {
@@ -106,7 +107,7 @@ fun CoachableSetScreen(
                             )
                             Spacer(modifier = Modifier.height(6.dp))
                             Text(
-                                text = "${nugget.author.firstName} ${nugget.author.lastName}",
+                                text = "${nugget.author?.firstName} ${nugget.author?.lastName}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )

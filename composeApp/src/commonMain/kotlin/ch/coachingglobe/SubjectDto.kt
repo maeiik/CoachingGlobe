@@ -10,3 +10,6 @@ data class SubjectDto(
     val subjects: List<SubjectDto>? = null,
     val coachableSets: List<CoachableSetDto>? = null
 )
+
+@Serializable
+class SubjectNav(val id: String)

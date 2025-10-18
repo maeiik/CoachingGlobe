@@ -104,7 +104,7 @@ fun NuggetScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     val author = nugget.author
-                    if (!author.photoUrl.isNullOrBlank()) {
+                    if (!author?.photoUrl.isNullOrBlank()) {
                         GCImage(
                             author.photoUrl,
                             modifier = Modifier
@@ -130,16 +130,16 @@ fun NuggetScreen(
 
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "${author.firstName} ${author.lastName}",
+                            text = "${author?.firstName} ${author?.lastName}",
                             fontWeight = FontWeight.SemiBold
                         )
-                        author.title?.let {
+                        author?.title?.let {
                             Text(
                                 text = it,
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
-                        author.bio?.let {
+                        author?.bio?.let {
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(text = it, style = MaterialTheme.typography.bodySmall)
                         }
@@ -156,13 +156,13 @@ fun NuggetScreen(
     }
 }
 
-fun extractYoutubeId(url: String): String? {
-    val a = url.split("youtube.com/watch?v=").getOrNull(1)
+fun extractYoutubeId(url: String?): String? {
+    val a = url?.split("youtube.com/watch?v=")?.getOrNull(1)
     return a
 }
 
-private fun initialsOf(author: AuthorDto): String {
-    val f = author.firstName.firstOrNull()?.uppercaseChar() ?: return "?"
-    val l = author.lastName.firstOrNull()?.uppercaseChar() ?: return "$f"
+private fun initialsOf(author: AuthorDto?): String {
+    val f = author?.firstName?.firstOrNull()?.uppercaseChar() ?: return "?"
+    val l = author?.lastName?.firstOrNull()?.uppercaseChar() ?: return "$f"
     return "$f$l"
 }

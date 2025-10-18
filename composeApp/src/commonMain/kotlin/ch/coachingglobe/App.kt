@@ -79,12 +79,22 @@ fun App() {
                         .fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    NavHost(navController = navController, startDestination = Routes.Explore) {
-                        composable(Routes.Explore) {
+                    NavHost(
+                        navController = navController,
+                        startDestination = SubjectNav("coaching_globe")
+                    ) {
+                        composable<SubjectNav> {
+                            val subject = it.toRoute<SubjectNav>()
                             ExploreScreen(
-                                sets = dataViewModel.getAllCoachableSets(),
-                                onSetClick = {
-                                    navController.navigate(CoachableSetNav(it.id))
+                                subject = dataViewModel.getSubject(subject.id)!!,
+                                onBack = if (subject.id != "coaching_globe") {
+                                    { navController.popBackStack() }
+                                } else null,
+                                onSubjectClicked = { subject ->
+                                    navController.navigate(SubjectNav(subject.id))
+                                },
+                                onCoachableSetClicked = { coachableSet ->
+                                    navController.navigate(CoachableSetNav(coachableSet.id))
                                 }
                             )
                         }

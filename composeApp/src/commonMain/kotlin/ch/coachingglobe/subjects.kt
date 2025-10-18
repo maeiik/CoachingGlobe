@@ -1,7 +1,7 @@
 package ch.coachingglobe
 
 
-val coachingGlobeSubject = SubjectDto(
+val subjectExamples = SubjectDto(
     id = "coaching_globe",
     title = "CoachingGlobe",
     description = "A holistic coaching framework combining personal development, spirituality, relationships, and global impact. It integrates key practices to empower individuals in multiple aspects of their lives.",

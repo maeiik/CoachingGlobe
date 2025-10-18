@@ -82,4 +82,21 @@ class DataViewModel : ViewModel() {
     }
 
     fun getAllCoachableSets() = sampleCoachableSets
+
+    fun getSubject(id: String, subjectToSearch: SubjectDto = subjectExamples): SubjectDto? {
+        if (subjectToSearch.id == id) return subjectToSearch
+        for (subject in subjectToSearch.subjects ?: emptyList()) {
+            if (subject.id == id) return subject
+        }
+        return null
+    }
+
+    fun getCoachableSet(id: String, subjectToSearch: SubjectDto = subjectExamples): CoachableSetDto? {
+        subjectToSearch.coachableSets?.firstOrNull { it.id == id }?.let { return it }
+        for (subject in subjectToSearch.subjects ?: emptyList()) {
+            val result = getCoachableSet(id, subject)
+            if (result != null) return result
+        }
+        return null
+    }
 }

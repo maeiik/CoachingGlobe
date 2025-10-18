@@ -11,9 +11,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,12 +30,23 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExploreScreen(
-    sets: List<CoachableSetDto>,
-    onSetClick: (CoachableSetDto) -> Unit
+    subject: SubjectDto,
+    onSubjectClicked: (SubjectDto) -> Unit,
+    onCoachableSetClicked: (CoachableSetDto) -> Unit,
+    onBack: (() -> Unit)?
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Coachable Sets") })
+            TopAppBar(
+                title = { Text(subject.title) },
+                navigationIcon = {
+                    onBack?.let {
+                        IconButton(onClick = it) {
+                            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                        }
+                    }
+                }
+            )
         }
     ) { paddingValues ->
         LazyColumn(
@@ -41,12 +56,43 @@ fun ExploreScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(sets, key = { it.id }) { set ->
-                CoachableSetItem(set, onClick = { onSetClick(set) })
+            val subjects = subject.subjects ?: emptyList()
+            items(items = subjects) {
+                SubjectItem(it, onClick = { onSubjectClicked(it) })
+            }
+
+            val coachableSets = subject.coachableSets ?: emptyList()
+            items(items = coachableSets) {
+                CoachableSetItem(it, onClick = { onCoachableSetClicked(it) })
             }
         }
     }
 }
+
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun ExploreScreen(
+//    sets: List<CoachableSetDto>,
+//    onSetClick: (CoachableSetDto) -> Unit
+//) {
+//    Scaffold(
+//        topBar = {
+//            TopAppBar(title = { Text("Coachable Sets") })
+//        }
+//    ) { paddingValues ->
+//        LazyColumn(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(paddingValues),
+//            contentPadding = PaddingValues(16.dp),
+//            verticalArrangement = Arrangement.spacedBy(12.dp)
+//        ) {
+//            items(sets, key = { it.id }) { set ->
+//                CoachableSetItem(set, onClick = { onSetClick(set) })
+//            }
+//        }
+//    }
+//}
 
 // --- Single Item Composable ---
 @Composable
@@ -66,6 +112,34 @@ fun CoachableSetItem(set: CoachableSetDto, onClick: () -> Unit) {
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "Nuggets: ${set.nuggets.size}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
+    }
+}
+
+@Composable
+fun SubjectItem(subject: SubjectDto, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = subject.title, style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = subject.description, style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Subjects: ${subject.subjects?.size ?: 0}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.secondary
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Coachable Sets: ${subject.coachableSets?.size ?: 0}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.secondary
             )
