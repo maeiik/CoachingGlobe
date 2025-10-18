@@ -94,9 +94,15 @@ class DataViewModel : ViewModel() {
         val status: NuggetStatus,
     )
 
-    fun loadMyGroups(forceReload: Boolean = false) {
-        handleRequest(response = groups, name = "loadMyGroups") {
-            apiService.loadMyGroups(forceReload = forceReload).groups
+    val apiService = ApiService()
+
+    init {
+        loadData()
+    }
+
+    fun loadData(forceReload: Boolean = false) {
+        handleRequest(response = dataResponse, name = "loadMyGroups") {
+            apiService.loadData()
         }
     }
 

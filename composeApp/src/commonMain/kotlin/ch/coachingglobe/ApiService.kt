@@ -6,11 +6,8 @@ import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
-import io.ktor.client.request.header
-import io.ktor.client.request.parameter
-import io.ktor.client.request.post
-import io.ktor.client.request.request
-import io.ktor.http.HttpMethod
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
@@ -37,16 +34,13 @@ class ApiService() {
 //        }
     }
 
-
-
-    suspend fun secretSanta(): Success =
-        client.post("${getURL()}/subject") {
-            createAuthorisedRequest(request = SecretSantaRequest(option), settings = settings)
+    suspend fun loadData(): DataDto =
+        client.get("${getURL()}/subject") {
+            contentType(ContentType.Application.Json)
         }.body()
-
 
     suspend fun downloadImage(url: String): ByteArray =
         client.get(url).body()
 }
 
-fun getURL() = "10.134.71.227:8080"
+fun getURL() = "10.134.71.227:8081"
