@@ -5,7 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Nugget(
-    val id: String,
+    val id: Int = 1,
+    val id_legacy: String,
     val title: String,
     val youtubeUrl: String? = null,
     val description: String,
@@ -13,4 +14,4 @@ data class Nugget(
 )
 
 @Serializable
-data class NuggetNav(val id: String)
+data class NuggetNav(val id: Int)

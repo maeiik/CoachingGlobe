@@ -29,11 +29,12 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubjectScreen(
-    subject: Subject,
+    subject: Subject?,
     onSubjectClicked: (Subject) -> Unit,
     onCoachableSetClicked: (CoachableSet) -> Unit,
     onBack: (() -> Unit)?
 ) {
+    subject ?: return
     Scaffold(
         topBar = {
             TopAppBar(

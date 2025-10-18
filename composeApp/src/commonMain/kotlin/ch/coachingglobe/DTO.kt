@@ -17,13 +17,14 @@ data class CoachableSetDto(
     val title: String,
     val description: String,
     val nuggets: List<Int>,
+    val author: Int,
 )
 
 @Serializable
 data class NuggetDto(
-    val id: String,
+    val id: Int,
     val title: String,
-    val youtubeUrl: String,
+    val youtubeUrl: String? = null,
     val description: String,
     val author: Int,
 )
@@ -48,13 +49,25 @@ data class UserDto(
 
 @Serializable
 data class RequestDto(
-    val id: String,
+    val id: Int,
     val user: UserDto,
-    val coachableSet: CoachableSet,
+    val coachableSet: Int,
     val status: String // E.g., "pending", "accepted", "rejected"
 )
 
 @Serializable
 data class RequestsDto(
+    val requests: List<RequestDto>
+)
+
+@Serializable
+data class MySpaceDto(
+    val requestedCoachableSets: List<Int>,
+    val enrolledCoachableSets: List<Int>
+)
+
+@Serializable
+data class TrainerDto(
+    val coachedSets: List<Int>,
     val requests: List<RequestDto>
 )

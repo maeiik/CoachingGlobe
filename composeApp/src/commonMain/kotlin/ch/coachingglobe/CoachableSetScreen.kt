@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.Color
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CoachableSetScreen(
-    id: String,
+    id: Int,
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
     onOpen: (Nugget) -> Unit = {},

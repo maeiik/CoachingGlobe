@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import ch.coachingglobe.ui.theme.AppTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -63,19 +62,26 @@ fun App() {
                         startDestination = GlobalCoachingNavigationGraph.ExploreGraph.Explore
                     ) {
                         composable<GlobalCoachingNavigationGraph.ExploreGraph.Explore> {
-                            ExploreScreen { navController.navigate(SubjectNav("coaching_globe")) }
+                            ExploreScreen {
+                                navController.navigate(
+                                    SubjectNav(
+                                        1,
+                                        "coaching_globe"
+                                    )
+                                )
+                            }
 
                         }
 
                         composable<SubjectNav> {
                             val subject = it.toRoute<SubjectNav>()
                             SubjectScreen(
-                                subject = dataViewModel.getSubject(subject.id)!!,
-                                onBack = if (subject.id != "coaching_globe") {
+                                subject = dataViewModel.getSubject(subject.id),
+                                onBack = if (subject.title != "coaching_globe") {
                                     { navController.popBackStack() }
                                 } else null,
                                 onSubjectClicked = { subject ->
-                                    navController.navigate(SubjectNav(subject.id))
+                                    navController.navigate(SubjectNav(0, subject.id_legacy))
                                 },
                                 onCoachableSetClicked = { coachableSet ->
                                     navController.navigate(CoachableSetNav(coachableSet.id))

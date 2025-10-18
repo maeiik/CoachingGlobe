@@ -78,26 +78,10 @@ fun TrainerScreen(navController: NavController) {
 
 @Composable
 fun TrainerRequestsScreen() {
-    // Example of mock data
-
-
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(sampleRequests) { request ->
             RequestCard(request, {}, {})
         }
-    }
-}
-
-@Composable
-fun RequestItem(request: RequestDto) {
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(text = "Request from ${request.user.name}")
-        Text(
-            text = "Coachable Set: ${request.coachableSet.title}",
-            style = MaterialTheme.typography.bodyMedium
-        )
-        Text(text = "Status: ${request.status}", style = MaterialTheme.typography.bodyMedium)
-        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
@@ -126,7 +110,7 @@ fun TrainerOverviewScreen() {
 
 @Composable
 fun RequestCard(
-    request: RequestDto,
+    request: Request,
     onAccept: () -> Unit,
     onDecline: () -> Unit
 ) {
