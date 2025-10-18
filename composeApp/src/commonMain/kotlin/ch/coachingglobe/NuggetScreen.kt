@@ -1,5 +1,6 @@
 package ch.coachingglobe
 
+import GCImage
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -104,10 +105,8 @@ fun NuggetScreen(
                 ) {
                     val author = nugget.author
                     if (!author.photoUrl.isNullOrBlank()) {
-                        KamelImage(
-                            resource = { asyncPainterResource(author.photoUrl) },
-                            contentDescription = "Author photo",
-                            contentScale = ContentScale.Crop,
+                        GCImage(
+                            author.photoUrl,
                             modifier = Modifier
                                 .size(64.dp)
                                 .clip(CircleShape)
@@ -157,7 +156,7 @@ fun NuggetScreen(
     }
 }
 
-private fun extractYoutubeId(url: String): String? {
+fun extractYoutubeId(url: String): String? {
     val a = url.split("youtube.com/watch?v=").getOrNull(1)
     return a
 }

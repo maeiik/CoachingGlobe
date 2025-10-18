@@ -1,0 +1,20 @@
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import io.kamel.image.KamelImage
+import io.kamel.image.asyncPainterResource
+
+val url = "https://lastingadventures.com/wp-content/uploads/2020/08/El-cap-facts.jpeg"
+
+@Composable
+fun GCImage(photoUrl: String, modifier: Modifier = Modifier) {
+//    KamelImage(
+//        resource = { asyncPainterResource(url) },
+//        contentDescription = "Profile photo",
+//        contentScale = ContentScale.Crop,
+//        onFailure = { Text(text = "Image failed to load") },
+//        modifier = modifier
+//    )
+    Text(text = "GCImage Placeholder")
+}

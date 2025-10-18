@@ -10,72 +10,121 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import ch.coachingglobe.ui.theme.AppTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 
-sealed class BottomNavItem(val route: String, val label: String, val icon: ImageVector) {
+sealed class BottomNavItem(
+    val route: String,
+    val label: String,
+    val icon: androidx.compose.ui.graphics.vector.ImageVector
+) {
     object Explore : BottomNavItem("explore", "Explore", Icons.Filled.Place)
     object MySpace : BottomNavItem("myspace", "My Space", Icons.Filled.CheckCircle)
     object Profile : BottomNavItem("profile", "Profile", Icons.Filled.Person)
 }
 
-@Composable
-fun App() {
-    AppTheme {
-        var selectedRoute by remember { mutableStateOf(BottomNavItem.Explore.route) }
-        val items = listOf(BottomNavItem.Explore, BottomNavItem.MySpace, BottomNavItem.Profile)
+private object Routes {
+    const val Explore = "explore" // reuse Explore as nuggets list
+    const val NuggetDetailBase = "nugget"
+    const val MySpace = "myspace"
+    const val Profile = "profile"
+}
 
-        Scaffold(
-            bottomBar = {
-                NavigationBar {
-                    items.forEach { item ->
-                        NavigationBarItem(
-                            selected = selectedRoute == item.route,
-                            onClick = { selectedRoute = item.route },
-                            icon = { Icon(item.icon, contentDescription = item.label) },
-                            label = { Text(item.label) }
-                        )
-                    }
-                }
-            }
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                when (selectedRoute) {
-                    BottomNavItem.Explore.route -> ExploreScreen()
-                    BottomNavItem.MySpace.route -> MySpaceScreen()
-                    BottomNavItem.Profile.route -> ProfileScreen(
-                        profile = ProfileDto(
-                            firstName = "John",
-                            lastName = "Doe",
-                            location = "Earth",
-                            photoUrl = null
-                        )
-                    )
-                }
-            }
-        }
-    }
+val LocalDataViewModel = staticCompositionLocalOf<DataViewModel> {
+    error("No DataViewModel provided")
 }
 
 @Composable
-fun ScreenLabel(text: String, content: @Composable (() -> Unit)? = null) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.padding(16.dp)
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.headlineMedium,
-            textAlign = TextAlign.Center
-        )
-        content?.invoke()
+fun App() {
+    val dataViewModel = remember { DataViewModel() }
+    CompositionLocalProvider(LocalDataViewModel provides dataViewModel) {
+        AppTheme {
+            val navController = rememberNavController()
+            val items = listOf(BottomNavItem.Explore, BottomNavItem.MySpace, BottomNavItem.Profile)
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+
+            Scaffold(
+                bottomBar = {
+                    NavigationBar {
+                        items.forEach { item ->
+                            val selected = when {
+                                currentRoute == null -> false
+                                currentRoute.startsWith(Routes.NuggetDetailBase) -> true
+                                else -> currentRoute == item.route
+                            }
+                            NavigationBarItem(
+                                selected = selected,
+                                onClick = {
+                                    navController.navigate(item.route) {
+                                        launchSingleTop = true
+                                    }
+                                },
+                                icon = { Icon(item.icon, contentDescription = item.label) },
+                                label = { Text(item.label) }
+                            )
+                        }
+                    }
+                }
+            ) { innerPadding ->
+                Box(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    NavHost(navController = navController, startDestination = Routes.Explore) {
+                        composable(Routes.Explore) {
+                            ExploreScreen(
+                                sets = dataViewModel.getAllCoachableSets(),
+                                onSetClick = {
+                                    navController.navigate(CoachableSetNav(it.id))
+                                }
+                            )
+                        }
+
+                        composable<CoachableSetNav> {
+                            CoachableSetScreen(
+                                id = it.toRoute<CoachableSetNav>().id,
+                                onBack = navController::popBackStack,
+                                onOpen = { nugget ->
+                                    navController.navigate(NuggetNav(nugget.id))
+                                }
+                            )
+                        }
+
+                        composable(Routes.MySpace) {
+                            MySpaceScreen()
+                        }
+
+                        composable(Routes.Profile) {
+                            ProfileScreen(
+                                profile = ProfileDto(
+                                    firstName = "John",
+                                    lastName = "Doe",
+                                    location = "Earth",
+                                    photoUrl = null
+                                )
+                            )
+                        }
+
+                        composable<NuggetNav> {
+                            val nugget = it.toRoute<NuggetNav>()
+                            NuggetScreen(
+                                nugget = dataViewModel.getNugget(nugget.id),
+                                onBack = { navController.popBackStack() },
+                                onCouchMe = { /* handle action */ }
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }

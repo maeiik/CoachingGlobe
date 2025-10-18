@@ -1,5 +1,6 @@
 package ch.coachingglobe
 
+import GCImage
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -107,10 +108,8 @@ fun ProfileScreen(
 @Composable
 private fun ProfileAvatar(photoUrl: String?, initials: String, modifier: Modifier = Modifier) {
     if (!photoUrl.isNullOrBlank()) {
-        KamelImage(
-            resource = { asyncPainterResource(photoUrl) },
-            contentDescription = "Profile photo",
-            contentScale = ContentScale.Crop,
+        GCImage(
+            photoUrl,
             modifier = modifier
                 .clip(CircleShape)
                 .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
@@ -133,8 +132,6 @@ private fun ProfileAvatar(photoUrl: String?, initials: String, modifier: Modifie
         }
     }
 }
-
-private fun asyncPainterResource(photoUrl: String) {}
 
 @Composable
 private fun Chip(text: String) {

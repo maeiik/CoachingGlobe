@@ -1,6 +1,9 @@
 package ch.coachingglobe
 
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class AuthorDto(
     val firstName: String,
     val lastName: String,
